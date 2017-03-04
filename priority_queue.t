@@ -1,6 +1,7 @@
 use 5.014;
 use strict;
 use warnings;
+use PriorityQueue;
 
 use Test::More 'no_plan';
 
