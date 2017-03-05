@@ -1,4 +1,4 @@
-package PriorityQueue;
+package PriorityQueueMax;
 
 use 5.014;
 use strict;
@@ -7,7 +7,7 @@ use warnings;
 use Carp qw(croak);
 
 sub new {
-	my ($class, $heap_type) = @_;
+	my $class = shift;
 	croak "class name needed" if ref($class);
 	
 	my $self = {
@@ -52,8 +52,45 @@ sub peek {
 sub dequeue {
 	ref(my $self = shift) or croak "instance variable needed";
 	return undef if $self->isEmpty();
-	$self->{size}--;
-	return shift @{$self->{heap}};
+	
+	sub heapify;
+		
+	my $root = $self->{heap}[0];
+	&heapify($self);
+	return $root;
+	
+	sub heapify {
+		my $self = shift;
+		$self->{size}--;
+		$self->{heap}[0] = $self->{heap}[$self->{size}]; 
+		$self->{heap}[$self->{size}] = undef;
+		
+		my $root = 0;
+		my ($left, $right);
+		while (1) {
+			$left = 2 * $root + 1;
+			$right = 2 * $root + 2;
+			
+			last if !defined($self->{heap}[$left]);
+			
+			my $max;
+			if (!defined($self->{heap}[$right])) {
+				$max = $left;
+			} else {
+				$max = $self->{heap}[$left] > $self->{heap}[$right]
+					? $left
+					: $right;
+			}
+			
+			if ($self->{heap}[$max] > $self->{heap}[$root]) {
+				($self->{heap}[$max], $self->{heap}[$root]) = ($self->{heap}[$root], $self->{heap}[$max]);
+				$root = $max;
+			} else {
+				last;
+			}
+		}
+		
+	}
 }
 
 1;
